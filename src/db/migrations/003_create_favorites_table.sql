@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS favorites (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  dua_id VARCHAR(255) NOT NULL,
+  subcategory_id VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(user_id, dua_id)
+); 

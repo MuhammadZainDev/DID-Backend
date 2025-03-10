@@ -5,6 +5,10 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const authRoutes = require('./routes/auth');
+const favoriteRoutes = require('./routes/favorites');
+const categoryRoutes = require('./routes/categories');
+const subcategoryRoutes = require('./routes/subcategories');
+const duaRoutes = require('./routes/duas');
 const { errorHandler } = require('./middleware/errorHandler');
 const { logger } = require('./utils/logger');
 
@@ -26,6 +30,10 @@ app.use(limiter);
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/favorites', favoriteRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/subcategories', subcategoryRoutes);
+app.use('/api/duas', duaRoutes);
 
 // Error handling
 app.use(errorHandler);

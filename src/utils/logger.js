@@ -1,21 +1,43 @@
 const winston = require('winston');
+const path = require('path');
 
+// Define log format
+const logFormat = winston.format.combine(
+  winston.format.timestamp(),
+  winston.format.printf(({ timestamp, level, message }) => {
+    return `${timestamp} [${level.toUpperCase()}]: ${message}`;
+  })
+);
+
+// Create the logger
 const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  format: logFormat,
   transports: [
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log' })
+    // Console logging
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        logFormat
+      )
+    }),
+    // File logging for errors
+    new winston.transports.File({
+      filename: path.join(__dirname, '../../logs/error.log'),
+      level: 'error'
+    }),
+    // File logging for all logs
+    new winston.transports.File({
+      filename: path.join(__dirname, '../../logs/combined.log')
+    })
   ]
 });
 
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.simple()
-  }));
-}
+// Create a stream object with a write function that will be used by morgan
+const stream = {
+  write: (message) => {
+    logger.info(message.trim());
+  }
+};
 
-module.exports = { logger }; 
+module.exports = { logger, stream }; 
