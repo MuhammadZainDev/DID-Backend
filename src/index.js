@@ -10,6 +10,7 @@ const categoryRoutes = require('./routes/categories');
 const subcategoryRoutes = require('./routes/subcategories');
 const duaRoutes = require('./routes/duas');
 const contactRoutes = require('./routes/contact');
+const geminiDuaRoutes = require('./routes/geminiDua');
 const { errorHandler } = require('./middleware/errorHandler');
 const { logger } = require('./utils/logger');
 
@@ -36,6 +37,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/subcategories', subcategoryRoutes);
 app.use('/api/duas', duaRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/gemini', geminiDuaRoutes);
 
 // Error handling
 app.use(errorHandler);
