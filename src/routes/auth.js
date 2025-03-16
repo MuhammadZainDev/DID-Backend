@@ -31,9 +31,11 @@ router.post('/signup', async (req, res) => {
     
     // Send welcome email
     try {
-      
       await sendWelcomeEmail(email, name);
+      console.log(`Welcome email sent successfully to ${email}`);
     } catch (emailError) {
+      // Log the error but don't fail the signup process
+      console.error('Failed to send welcome email:', emailError.message);
     }
     
     // Generate token
