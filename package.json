@@ -1,7 +1,7 @@
 {
-  "name": "daily-islamic-dua-backend",
+  "name": "duaonai-backend",
   "version": "1.0.0",
-  "description": "Backend service for Daily Islamic Dua app with prayer times integration",
+  "description": "Backend service for DuaonAI app with prayer times integration",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",

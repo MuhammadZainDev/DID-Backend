@@ -14,104 +14,159 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Test email configuration immediately
+// Test email configuration only in development
 const testEmailConfig = async () => {
-    console.log('Testing email configuration...');
-    try {
-        const testResult = await transporter.verify();
-        console.log('Email server connection test result:', testResult);
-        return true;
-    } catch (error) {
-        console.error('Email verification failed:');
-        console.error('Error name:', error.name);
-        console.error('Error message:', error.message);
-        return false;
+    if (process.env.NODE_ENV !== 'production') {
+        try {
+            const testResult = await transporter.verify();
+            console.log('Email server connection verified');
+            return true;
+        } catch (error) {
+            console.error('Email verification failed:', error.message);
+            return false;
+        }
     }
+    return true;
 };
 
-// Run the test immediately
-testEmailConfig();
+// Run the test in development
+if (process.env.NODE_ENV !== 'production') {
+    testEmailConfig();
+}
 
 const sendWelcomeEmail = async (userEmail, userName) => {
-    console.log('\n=== Starting Welcome Email Send ===');
-    console.log('Sending to:', userEmail);
-    console.log('User name:', userName);
+    if (process.env.NODE_ENV !== 'production') {
+        console.log('Sending welcome email to:', userEmail);
+    }
     
     const mailOptions = {
-        from: `"Daily Islamic Dua" <${process.env.EMAIL_USER}>`,
+        from: `"DuaonAI" <${process.env.EMAIL_USER}>`,
         to: userEmail,
-        subject: 'Welcome to Daily Islamic Dua! 🌙',
+        subject: 'Welcome to DuaonAI! 🌙',
         html: `
         <!DOCTYPE html>
         <html>
         <head>
             <style>
                 body {
-                    font-family: Arial, sans-serif;
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                     line-height: 1.6;
                     color: #333333;
+                    background-color: #f4f7fb;
+                    margin: 0;
+                    padding: 0;
                 }
                 .container {
                     max-width: 600px;
                     margin: 0 auto;
-                    padding: 20px;
+                    padding: 0;
                     background-color: #ffffff;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
                 }
                 .header {
+                    background: linear-gradient(135deg, #6e8efb, #a777e3);
+                    padding: 30px 0;
                     text-align: center;
-                    padding: 20px 0;
                 }
                 .logo {
-                    color: #0E8A3E;
-                    font-size: 24px;
+                    color: white;
+                    font-size: 28px;
                     font-weight: bold;
+                    letter-spacing: 1px;
                 }
                 .content {
-                    background-color: #f9f9f9;
-                    padding: 30px;
-                    border-radius: 10px;
-                    margin: 20px 0;
+                    padding: 35px;
+                    background-color: #ffffff;
+                }
+                .welcome-message {
+                    text-align: center;
+                    margin-bottom: 25px;
+                }
+                .welcome-message h2 {
+                    color: #4a4a4a;
+                    font-weight: 600;
+                    margin-top: 0;
+                }
+                .features {
+                    background-color: #f8f9ff;
+                    padding: 25px;
+                    border-radius: 6px;
+                    margin: 25px 0;
+                }
+                .features ul {
+                    padding-left: 20px;
+                }
+                .features li {
+                    margin-bottom: 12px;
+                    position: relative;
+                    list-style-type: none;
+                    padding-left: 15px;
+                }
+                .features li:before {
+                    content: "•";
+                    color: #a777e3;
+                    font-weight: bold;
+                    position: absolute;
+                    left: -5px;
                 }
                 .button {
                     display: inline-block;
-                    padding: 12px 24px;
-                    background-color: #0E8A3E;
+                    padding: 12px 30px;
+                    background: linear-gradient(to right, #6e8efb, #a777e3);
                     color: #ffffff !important;
                     text-decoration: none;
-                    border-radius: 5px;
+                    border-radius: 30px;
+                    font-weight: 600;
+                    text-align: center;
+                    letter-spacing: 0.5px;
+                    transition: all 0.3s ease;
+                    border: none;
                     margin: 20px 0;
+                    box-shadow: 0 4px 10px rgba(167, 119, 227, 0.3);
+                }
+                .button:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 15px rgba(167, 119, 227, 0.4);
                 }
                 .footer {
                     text-align: center;
-                    color: #666666;
+                    padding: 20px;
+                    color: #878787;
                     font-size: 12px;
-                    margin-top: 30px;
+                    background-color: #f8f9ff;
+                    border-top: 1px solid #eaeaea;
                 }
             </style>
         </head>
         <body>
             <div class="container">
                 <div class="header">
-                    <div class="logo">Daily Islamic Dua</div>
+                    <div class="logo">DuaonAI</div>
                 </div>
                 <div class="content">
-                    <h2>Assalamu Alaikum ${userName}!</h2>
-                    <p>Welcome to Daily Islamic Dua. We're thrilled to have you as part of our community.</p>
+                    <div class="welcome-message">
+                        <h2>Assalamu Alaikum ${userName}!</h2>
+                        <p>Welcome to DuaonAI. We're thrilled to have you as part of our community.</p>
+                    </div>
                     <p>With our app, you can:</p>
-                    <ul>
-                        <li>Access a vast collection of authentic duas</li>
-                        <li>Learn the proper way to recite them</li>
-                        <li>Save your favorite duas for quick access</li>
-                        <li>Get daily reminders for important duas</li>
-                    </ul>
+                    <div class="features">
+                        <ul>
+                            <li>Access a vast collection of authentic duas</li>
+                            <li>Learn the proper way to recite them</li>
+                            <li>Save your favorite duas for quick access</li>
+                            <li>Get daily reminders for important duas</li>
+                        </ul>
+                    </div>
                     <p>Start exploring our collection of duas and enhance your spiritual journey.</p>
                     <center>
-                        <a href="http://localhost:3000" class="button">Open App</a>
+                        <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}" class="button">Open App</a>
                     </center>
                 </div>
                 <div class="footer">
                     <p>This email was sent to ${userEmail}</p>
-                    <p>© ${new Date().getFullYear()} Daily Islamic Dua. All rights reserved.</p>
+                    <p>© ${new Date().getFullYear()} DuaonAI. All rights reserved.</p>
                 </div>
             </div>
         </body>
@@ -120,67 +175,80 @@ const sendWelcomeEmail = async (userEmail, userName) => {
     };
 
     try {
-        console.log('Attempting to send email...');
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully!');
-        console.log('Message ID:', info.messageId);
+        if (process.env.NODE_ENV !== 'production') {
+            console.log('Welcome email sent successfully');
+        }
         return info;
     } catch (error) {
-        console.error('\n=== Email Send Error ===');
-        console.error('Type:', error.name);
-        console.error('Error Message:', error.message);
-        if (error.code) console.error('Code:', error.code);
+        console.error('Welcome email send error:', error.message);
         throw error;
     }
 };
 
 const sendPasswordResetEmail = async (userEmail, resetToken) => {
-    console.log('\n=== Starting Password Reset Email Send ===');
-    console.log('Sending to:', userEmail);
-    console.log('Reset Token:', resetToken);
+    if (process.env.NODE_ENV !== 'production') {
+        console.log('Sending password reset email to:', userEmail);
+    }
     
     const mailOptions = {
-        from: `"Daily Islamic Dua" <${process.env.EMAIL_USER}>`,
+        from: `"DuaonAI" <${process.env.EMAIL_USER}>`,
         to: userEmail,
-        subject: 'Reset Your Password - Daily Islamic Dua',
+        subject: 'Reset Your Password - DuaonAI',
         html: `
         <!DOCTYPE html>
         <html>
         <head>
             <style>
                 body {
-                    font-family: Arial, sans-serif;
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                     line-height: 1.6;
                     color: #333333;
+                    background-color: #f4f7fb;
+                    margin: 0;
+                    padding: 0;
                 }
                 .container {
                     max-width: 600px;
                     margin: 0 auto;
-                    padding: 20px;
-                    border: 1px solid #eeeeee;
+                    padding: 0;
+                    background-color: #ffffff;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
                 }
                 .header {
-                    background-color: #0E8A3E;
-                    color: white;
-                    padding: 20px;
+                    background: linear-gradient(135deg, #6e8efb, #a777e3);
+                    padding: 30px 0;
                     text-align: center;
+                    color: white;
+                }
+                .header h1 {
+                    margin: 0;
+                    font-weight: 600;
                 }
                 .content {
-                    padding: 20px;
+                    padding: 35px;
+                    background-color: #ffffff;
                 }
                 .verification-code {
-                    font-size: 24px;
+                    font-size: 28px;
                     font-weight: bold;
                     text-align: center;
-                    margin: 20px 0;
-                    letter-spacing: 5px;
-                    color: #0E8A3E;
+                    margin: 30px 0;
+                    letter-spacing: 6px;
+                    color: #a777e3;
+                    background-color: #f8f9ff;
+                    padding: 20px;
+                    border-radius: 8px;
                 }
                 .footer {
                     text-align: center;
-                    margin-top: 20px;
+                    padding: 20px;
+                    color: #878787;
                     font-size: 12px;
-                    color: #999999;
+                    background-color: #f8f9ff;
+                    border-top: 1px solid #eaeaea;
                 }
             </style>
         </head>
@@ -190,7 +258,7 @@ const sendPasswordResetEmail = async (userEmail, resetToken) => {
                     <h1>Password Reset Request</h1>
                 </div>
                 <div class="content">
-                    <p>You recently requested to reset your password for your Daily Islamic Dua account. Use the verification code below to complete the process:</p>
+                    <p>You recently requested to reset your password for your DuaonAI account. Use the verification code below to complete the process:</p>
                     
                     <div class="verification-code">${resetToken}</div>
                     
@@ -198,7 +266,7 @@ const sendPasswordResetEmail = async (userEmail, resetToken) => {
                     
                     <p>If you did not request a password reset, please ignore this email or contact support if you have concerns.</p>
                     
-                    <p>Thank you,<br>The Daily Islamic Dua Team</p>
+                    <p>Thank you,<br>The DuaonAI Team</p>
                 </div>
                 <div class="footer">
                     <p>This is an automated message, please do not reply to this email.</p>
@@ -210,22 +278,13 @@ const sendPasswordResetEmail = async (userEmail, resetToken) => {
     };
 
     try {
-        console.log('Attempting to send password reset email...');
-        console.log('Email configuration:');
-        console.log('- From:', process.env.EMAIL_USER);
-        console.log('- To:', userEmail);
-        console.log('- Subject:', mailOptions.subject);
-        
         const info = await transporter.sendMail(mailOptions);
-        console.log('Password reset email sent successfully!');
-        console.log('Message ID:', info.messageId);
+        if (process.env.NODE_ENV !== 'production') {
+            console.log('Password reset email sent successfully');
+        }
         return true;
     } catch (error) {
-        console.error('Error sending password reset email:');
-        console.error('Error name:', error.name);
-        console.error('Error message:', error.message);
-        console.error('Error code:', error.code);
-        console.error('Error response:', error.response);
+        console.error('Password reset email error:', error.message);
         return false;
     }
 };
