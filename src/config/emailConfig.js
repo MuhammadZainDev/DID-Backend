@@ -52,7 +52,7 @@ const sendWelcomeEmail = async (userEmail, userName) => {
             address: process.env.EMAIL_USER
         },
         to: userEmail,
-        subject: 'Welcome to DuaonAI! 🌙',
+        subject: 'Welcome to DuaonAI',
         // Add reply-to header to improve deliverability
         replyTo: process.env.EMAIL_USER,
         // Add priority headers
@@ -91,15 +91,17 @@ const sendWelcomeEmail = async (userEmail, userName) => {
                     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
                 }
                 .header {
-                    background: #4CAF50;
-                    padding: 30px 0;
+                    background-color: #FFFFFF;
+                    padding: 30px 0 15px;
                     text-align: center;
+                    border-bottom: 1px solid #eeeeee;
                 }
-                .logo {
-                    color: white;
-                    font-size: 28px;
-                    font-weight: bold;
-                    letter-spacing: 1px;
+                .title {
+                    margin-top: 5px;
+                    margin-bottom: 10px;
+                    color: #121212;
+                    font-size: 24px;
+                    font-weight: 600;
                 }
                 .content {
                     padding: 35px;
@@ -107,99 +109,129 @@ const sendWelcomeEmail = async (userEmail, userName) => {
                 }
                 .welcome-message {
                     text-align: center;
-                    margin-bottom: 25px;
+                    margin-bottom: 30px;
                 }
                 .welcome-message h2 {
-                    color: #4a4a4a;
+                    color: #121212;
                     font-weight: 600;
                     margin-top: 0;
+                    font-size: 22px;
                 }
-                .features {
-                    background-color: #f8f9ff;
-                    padding: 25px;
-                    border-radius: 6px;
-                    margin: 25px 0;
+                .feature-container {
+                    display: block;
+                    margin: 30px 0;
                 }
-                .features ul {
-                    padding-left: 20px;
-                }
-                .features li {
+                .feature-item {
+                    padding: 16px 20px;
                     margin-bottom: 12px;
+                    background-color: #f8f9ff;
+                    border-radius: 0;
                     position: relative;
-                    list-style-type: none;
-                    padding-left: 15px;
+                    border-left: 3px solid #4CAF50;
                 }
-                .features li:before {
-                    content: "•";
-                    color: #4CAF50;
-                    font-weight: bold;
-                    position: absolute;
-                    left: -5px;
+                .feature-icon {
+                    display: none; /* Hide the dots */
+                }
+                .feature-text {
+                    display: inline-block;
+                    vertical-align: middle;
+                    color: #333333;
+                    font-size: 15px;
+                }
+                .button-container {
+                    text-align: center;
+                    margin: 35px 0 25px;
                 }
                 .button {
                     display: inline-block;
-                    padding: 12px 30px;
-                    background: #4CAF50;
+                    padding: 14px 36px;
+                    background-color: #1E1E1E;
                     color: #ffffff !important;
                     text-decoration: none;
-                    border-radius: 30px;
+                    border-radius: 8px;
                     font-weight: 600;
+                    font-size: 15px;
                     text-align: center;
                     letter-spacing: 0.5px;
                     transition: all 0.3s ease;
                     border: none;
-                    margin: 20px 0;
                 }
                 .whitelist-info {
-                    font-size: 12px;
+                    font-size: 13px;
                     color: #666;
-                    margin-top: 20px;
                     text-align: center;
-                    padding: 10px;
+                    padding: 16px;
                     background-color: #f9f9f9;
-                    border-radius: 5px;
+                    border-radius: 8px;
+                    margin-top: 30px;
                 }
                 .footer {
                     text-align: center;
                     padding: 20px;
                     color: #878787;
                     font-size: 12px;
-                    background-color: #f8f9ff;
+                    background-color: #FFFFFF;
                     border-top: 1px solid #eaeaea;
+                }
+                .note {
+                    font-size: 14px;
+                    color: #666666;
+                    text-align: center;
+                    margin-top: 20px;
+                }
+                .contact {
+                    margin-top: 30px;
+                    text-align: center;
+                    font-size: 12px;
+                    color: #777777;
+                }
+                .contact a {
+                    color: #4CAF50;
+                    text-decoration: none;
                 }
             </style>
         </head>
         <body>
             <div class="container">
                 <div class="header">
-                    <div class="logo">DuaonAI</div>
+                    <div class="title">Welcome to DuaonAI</div>
                 </div>
                 <div class="content">
                     <div class="welcome-message">
-                        <h2>Assalamu Alaikum ${userName}</h2>
-                        <p>Welcome to DuaonAI. We're thrilled to have you as part of our community.</p>
+                        <h2>Assalamu Alaikum, ${userName}</h2>
+                        <p>We're pleased to welcome you to the DuaonAI community.</p>
                     </div>
-                    <p>With our app, you can:</p>
-                    <div class="features">
-                        <ul>
-                            <li>Access a vast collection of authentic duas</li>
-                            <li>Learn the proper way to recite them</li>
-                            <li>Save your favorite duas for quick access</li>
-                            <li>Get daily reminders for important duas</li>
-                        </ul>
-                    </div>
-                    <p>Start exploring our collection of duas and enhance your spiritual journey.</p>
-                    <center>
-                        <a href="${process.env.APP_SCHEME || 'duaonai://'}" class="button">Open App</a>
-                    </center>
                     
-                    <div class="whitelist-info">
-                        <p>To ensure you receive our emails, please add <strong>${process.env.EMAIL_USER}</strong> to your contacts or whitelist.</p>
+                    <p>With our application, you can benefit from:</p>
+                    
+                    <div class="feature-container">
+                        <div class="feature-item">
+                            <span class="feature-icon"></span>
+                            <span class="feature-text">Access a vast collection of authentic duas</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon"></span>
+                            <span class="feature-text">Learn the proper way to recite them</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon"></span>
+                            <span class="feature-text">Save your favorite duas for quick access</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon"></span>
+                            <span class="feature-text">Get daily reminders for important duas</span>
+                        </div>
+                    </div>
+                    
+                    <p style="text-align: center;">Start exploring our collection today and enhance your spiritual journey.</p>
+                    
+                    <div class="contact">
+                        <p>Questions or need assistance? Contact us at <a href="mailto:${process.env.EMAIL_USER}">${process.env.EMAIL_USER}</a></p>
                     </div>
                 </div>
                 <div class="footer">
                     <p>This email was sent to ${userEmail}</p>
-                    <p>© ${new Date().getFullYear()} DuaonAI. All rights reserved.</p>
+                    <p>&copy; ${new Date().getFullYear()} DuaonAI. All rights reserved.</p>
                 </div>
             </div>
         </body>
@@ -208,17 +240,17 @@ const sendWelcomeEmail = async (userEmail, userName) => {
         // Also include text version for better deliverability
         text: `Assalamu Alaikum ${userName},
         
-Welcome to DuaonAI. We're thrilled to have you as part of our community.
+Welcome to DuaonAI. We're pleased to welcome you to our community.
 
-With our app, you can:
+With our application, you can benefit from:
 - Access a vast collection of authentic duas
 - Learn the proper way to recite them
 - Save your favorite duas for quick access
 - Get daily reminders for important duas
 
-Start exploring our collection of duas and enhance your spiritual journey.
+Start exploring our collection today and enhance your spiritual journey.
 
-To ensure you receive our emails, please add ${process.env.EMAIL_USER} to your contacts.
+Questions or need assistance? Contact us at ${process.env.EMAIL_USER}
 
 © ${new Date().getFullYear()} DuaonAI. All rights reserved.`
     };
