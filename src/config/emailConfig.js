@@ -2,12 +2,9 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
+const { logger } = require('../utils/logger');
 
-console.log('Email Config Loading...');
-console.log('Email User:', process.env.EMAIL_USER);
-console.log('Email Pass exists:', !!process.env.EMAIL_PASS);
-
-// Create transporter with better configuration for spam prevention
+// Cleaner initialization without exposed details
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -25,10 +22,10 @@ const testEmailConfig = async () => {
     if (process.env.NODE_ENV !== 'production') {
         try {
             const testResult = await transporter.verify();
-            console.log('Email server connection verified');
+            logger.info('Email server connection verified');
             return true;
         } catch (error) {
-            console.error('Email verification failed:', error.message);
+            logger.error(`Email verification failed: ${error.message}`);
             return false;
         }
     }
@@ -42,7 +39,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const sendWelcomeEmail = async (userEmail, userName) => {
     if (process.env.NODE_ENV !== 'production') {
-        console.log('Sending welcome email to:', userEmail);
+        logger.info(`Sending welcome email to: ${userEmail}`);
     }
     
     // Prepare email with better anti-spam measures
@@ -258,18 +255,18 @@ Questions or need assistance? Contact us at ${process.env.EMAIL_USER}
     try {
         const info = await transporter.sendMail(mailOptions);
         if (process.env.NODE_ENV !== 'production') {
-            console.log('Welcome email sent successfully');
+            logger.info('Welcome email sent successfully');
         }
-        return info;
+        return true;
     } catch (error) {
-        console.error('Welcome email send error:', error.message);
-        throw error;
+        logger.error(`Welcome email error: ${error.message}`);
+        return false;
     }
 };
 
 const sendPasswordResetEmail = async (userEmail, resetToken) => {
     if (process.env.NODE_ENV !== 'production') {
-        console.log('Sending password reset email to:', userEmail);
+        logger.info(`Sending password reset email to: ${userEmail}`);
     }
     
     // Format the reset token into individual digits for display in boxes
@@ -453,11 +450,11 @@ Problems or questions? Contact us at ${process.env.EMAIL_USER}
     try {
         const info = await transporter.sendMail(mailOptions);
         if (process.env.NODE_ENV !== 'production') {
-            console.log('Password reset email sent successfully');
+            logger.info('Password reset email sent successfully');
         }
         return true;
     } catch (error) {
-        console.error('Password reset email error:', error.message);
+        logger.error(`Password reset email error: ${error.message}`);
         return false;
     }
 };

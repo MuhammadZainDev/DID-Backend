@@ -5,6 +5,7 @@ const User = require('../models/user');
 const auth = require('../middleware/auth');
 const { sendWelcomeEmail, sendPasswordResetEmail } = require('../config/emailConfig');
 const crypto = require('crypto');
+const { logger } = require('../utils/logger');
 
 const router = express.Router();
 
@@ -32,10 +33,10 @@ router.post('/signup', async (req, res) => {
     // Send welcome email
     try {
       await sendWelcomeEmail(email, name);
-      console.log(`Welcome email sent successfully to ${email}`);
+      logger.info(`Welcome email sent successfully to ${email}`);
     } catch (emailError) {
       // Log the error but don't fail the signup process
-      console.error('Failed to send welcome email:', emailError.message);
+      logger.error('Failed to send welcome email:', emailError.message);
     }
     
     // Generate token
@@ -55,9 +56,9 @@ router.post('/signup', async (req, res) => {
       token
     });
   } catch (error) {
-    console.error('\n=== Signup Error ===');
-    console.error('Error Type:', error.name);
-    console.error('Error Message:', error.message);
+    logger.error('\n=== Signup Error ===');
+    logger.error('Error Type:', error.name);
+    logger.error('Error Message:', error.message);
     
     if (error.message === 'Email already exists') {
       return res.status(400).json({ error: error.message });
@@ -125,50 +126,73 @@ router.get('/me', auth, async (req, res) => {
 // Forgot password route - Step 1: Request reset
 router.post('/forgot-password', async (req, res) => {
   try {
-    console.log('\n=== Forgot Password Request ===');
-    console.log('Request body:', req.body);
-    
     const { email } = req.body;
+    
+    if (process.env.NODE_ENV !== 'production') {
+      logger.info('=== Forgot Password Request ===');
+      logger.debug(`Request body: ${JSON.stringify(req.body)}`);
+    }
 
     if (!email) {
-      console.log('Error: Email is required');
-      return res.status(400).json({ error: 'Email is required' });
+      logger.warn('Forgot password attempt without email');
+      return res.status(400).json({ message: 'Email is required' });
     }
 
-    console.log('Looking up user with email:', email);
-    // Check if user exists
+    if (process.env.NODE_ENV !== 'production') {
+      logger.debug(`Looking up user with email: ${email}`);
+    }
+
     const user = await User.findByEmail(email);
     if (!user) {
-      console.log('Error: User not found');
-      return res.status(404).json({ error: 'User not found' });
+      logger.warn(`Password reset attempted for non-existent email: ${email}`);
+      return res.status(404).json({ message: 'User not found' });
     }
-    console.log('User found:', user.id);
 
-    // Generate a 6-digit verification code
-    const resetToken = Math.floor(100000 + Math.random() * 900000).toString();
-    console.log('Generated reset token:', resetToken);
+    if (process.env.NODE_ENV !== 'production') {
+      logger.debug(`User found: ${user.id}`);
+    }
+
+    // Generate a secure token
+    const resetToken = crypto.randomBytes(3).toString('hex');
     
-    // Set expiration time (15 minutes from now)
-    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
-    console.log('Token expires at:', expiresAt);
+    if (process.env.NODE_ENV !== 'production') {
+      logger.debug(`Generated reset token for ${email}`);
+    }
+
+    // Set expiration (15 minutes from now)
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 15);
     
-    // Store the reset token in the database
-    console.log('Storing reset token in database...');
+    if (process.env.NODE_ENV !== 'production') {
+      logger.debug(`Token expires at: ${expiresAt}`);
+    }
+
+    // Store the token in the database
+    if (process.env.NODE_ENV !== 'production') {
+      logger.debug('Storing reset token in database...');
+    }
+    
     await User.storeResetToken(email, resetToken, expiresAt);
-    console.log('Reset token stored successfully');
     
-    // Send the reset email
-    console.log('Sending reset email...');
+    if (process.env.NODE_ENV !== 'production') {
+      logger.debug('Reset token stored successfully');
+    }
+
+    // Send the email
+    if (process.env.NODE_ENV !== 'production') {
+      logger.debug('Sending reset email...');
+    }
+    
     const emailSent = await sendPasswordResetEmail(email, resetToken);
-    console.log('Email sent result:', emailSent);
     
-    res.json({ 
-      message: 'Password reset email sent',
-      email
-    });
+    if (process.env.NODE_ENV !== 'production') {
+      logger.debug(`Email sent result: ${emailSent}`);
+    }
+
+    return res.status(200).json({ message: 'Password reset email sent successfully' });
   } catch (error) {
-    console.error('Forgot password error:', error);
-    res.status(500).json({ error: 'Server error' });
+    logger.error(`Password reset error: ${error.message}`);
+    return res.status(500).json({ message: 'Server error during password reset' });
   }
 });
 
@@ -202,7 +226,7 @@ router.post('/verify-reset-code', async (req, res) => {
       email
     });
   } catch (error) {
-    console.error('Verify reset code error:', error);
+    logger.error('Verify reset code error:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -245,7 +269,7 @@ router.post('/reset-password', async (req, res) => {
     
     res.json({ message: 'Password reset successful' });
   } catch (error) {
-    console.error('Reset password error:', error);
+    logger.error('Reset password error:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });

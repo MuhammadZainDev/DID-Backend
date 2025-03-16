@@ -1,5 +1,6 @@
 const { Pool } = require('pg');
 require('dotenv').config();
+const { logger } = require('../utils/logger');
 
 // Determine if we're in production mode
 const isProduction = process.env.NODE_ENV === 'production';
@@ -30,7 +31,7 @@ const pool = new Pool(poolConfig);
 
 // Pool error handling
 pool.on('error', (err, client) => {
-  console.error('Unexpected error on idle client', err);
+  logger.error(`Unexpected error on idle client: ${err.message}`);
   // Do not throw error as this would crash the server
 });
 
