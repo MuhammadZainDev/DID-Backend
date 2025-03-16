@@ -6,25 +6,20 @@ const { logger } = require('../utils/logger');
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Configure connection options
-const poolConfig = {
-  user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'DuaonAIDB',
-  password: process.env.DB_PASSWORD || 'your_password',
-  port: process.env.DB_PORT || 5432,
-  
-  // Connection pool settings
-  max: 20, // Maximum number of clients in the pool
-  idleTimeoutMillis: 30000, // How long a client is allowed to remain idle before being closed
-  connectionTimeoutMillis: 2000, // How long to wait before timing out when connecting a new client
-  
-  // SSL configuration for production
-  ssl: isProduction ? {
-    rejectUnauthorized: true, // Verify SSL certificate
-    // If you have a self-signed certificate, set this to false
-    // rejectUnauthorized: false,
-  } : false
-};
+const poolConfig = isProduction
+  ? {
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false, // Agar aap Render, Railway, ya Neon use kar rahe hain
+      },
+    }
+  : {
+      user: process.env.DB_USER || 'postgres',
+      host: process.env.DB_HOST || 'localhost',
+      database: process.env.DB_NAME || 'DuaonAI',
+      password: process.env.DB_PASSWORD || 'your_password',
+      port: process.env.DB_PORT || 5432,
+    };
 
 // Create the pool
 const pool = new Pool(poolConfig);
@@ -32,11 +27,10 @@ const pool = new Pool(poolConfig);
 // Pool error handling
 pool.on('error', (err, client) => {
   logger.error(`Unexpected error on idle client: ${err.message}`);
-  // Do not throw error as this would crash the server
 });
 
 // Export the query function directly for cleaner usage
 module.exports = {
   query: (text, params) => pool.query(text, params),
   pool
-}; 
+};
