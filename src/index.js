@@ -34,6 +34,7 @@ const corsOptions = {
 app.use(helmet()); // Security headers
 app.use(cors(corsOptions)); // Enable CORS with proper config
 app.use(express.json()); // Parse JSON bodies
+app.set('trust proxy', 1); // Enable trust proxy for rate limiting to work correctly
 
 // Logging - use combined format in production and dev format in development
 app.use(morgan(isProduction ? 'combined' : 'dev', { 
