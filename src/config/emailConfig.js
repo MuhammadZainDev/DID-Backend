@@ -45,11 +45,11 @@ const sendWelcomeEmail = async (userEmail, userName) => {
     // Prepare email with better anti-spam measures
     const mailOptions = {
         from: {
-            name: "DuaonAI App",
+            name: "Duaon AI",
             address: process.env.EMAIL_USER
         },
         to: userEmail,
-        subject: 'Welcome to DuaonAI',
+        subject: 'Welcome to Duaon AI',
         // Add reply-to header to improve deliverability
         replyTo: process.env.EMAIL_USER,
         // Add priority headers
@@ -68,7 +68,7 @@ const sendWelcomeEmail = async (userEmail, userName) => {
         <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Welcome to DuaonAI</title>
+            <title>Welcome to Duaon AI</title>
             <style>
                 body {
                     font-family: Arial, sans-serif;
@@ -191,12 +191,15 @@ const sendWelcomeEmail = async (userEmail, userName) => {
         <body>
             <div class="container">
                 <div class="header">
-                    <div class="title">Welcome to DuaonAI</div>
+                    <div style="display:block; margin: 30px auto; text-align: center;">
+                        <!-- Logo container with media query for dark mode -->
+                        <div class="title">Welcome to Duaon AI</div>
+                    </div>
                 </div>
                 <div class="content">
                     <div class="welcome-message">
                         <h2>Assalamu Alaikum, ${userName}</h2>
-                        <p>We're pleased to welcome you to the DuaonAI community.</p>
+                        <p>We're pleased to welcome you to the Duaon AI community.</p>
                     </div>
                     
                     <p>With our application, you can benefit from:</p>
@@ -228,7 +231,7 @@ const sendWelcomeEmail = async (userEmail, userName) => {
                 </div>
                 <div class="footer">
                     <p>This email was sent to ${userEmail}</p>
-                    <p>&copy; ${new Date().getFullYear()} DuaonAI. All rights reserved.</p>
+                    <p>&copy; ${new Date().getFullYear()} Duaon AI. All rights reserved.</p>
                 </div>
             </div>
         </body>
@@ -237,7 +240,7 @@ const sendWelcomeEmail = async (userEmail, userName) => {
         // Also include text version for better deliverability
         text: `Assalamu Alaikum ${userName},
         
-Welcome to DuaonAI. We're pleased to welcome you to our community.
+Welcome to Duaon AI. We're pleased to welcome you to our community.
 
 With our application, you can benefit from:
 - Access a vast collection of authentic duas
@@ -249,7 +252,7 @@ Start exploring our collection today and enhance your spiritual journey.
 
 Questions or need assistance? Contact us at ${process.env.EMAIL_USER}
 
-© ${new Date().getFullYear()} DuaonAI. All rights reserved.`
+© ${new Date().getFullYear()} Duaon AI. All rights reserved.`
     };
 
     try {
@@ -277,11 +280,11 @@ const sendPasswordResetEmail = async (userEmail, resetToken) => {
     
     const mailOptions = {
         from: {
-            name: "DuaonAI App",
+            name: "Duaon AI",
             address: process.env.EMAIL_USER
         },
         to: userEmail,
-        subject: 'Reset Your Password - DuaonAI',
+        subject: 'Reset Your Password - Duaon AI',
         // Add reply-to header to improve deliverability
         replyTo: process.env.EMAIL_USER,
         // Add priority headers
@@ -302,7 +305,7 @@ const sendPasswordResetEmail = async (userEmail, resetToken) => {
         <head>
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Reset Your Password - DuaonAI</title>
+            <title>Reset Your Password - Duaon AI</title>
             <style>
                 body {
                     font-family: Arial, sans-serif;
@@ -422,14 +425,14 @@ const sendPasswordResetEmail = async (userEmail, resetToken) => {
                     </div>
                 </div>
                 <div class="footer">
-                    <p>&copy; ${new Date().getFullYear()} DuaonAI. All rights reserved.</p>
+                    <p>&copy; ${new Date().getFullYear()} Duaon AI. All rights reserved.</p>
                 </div>
             </div>
         </body>
         </html>
         `,
         // Also include text version for better deliverability
-        text: `Reset Your Password - DuaonAI
+        text: `Reset Your Password - Duaon AI
 
 Assalamu Alaikum,
 
@@ -443,8 +446,7 @@ If you did not request a password reset, please ignore this email.
 
 Problems or questions? Contact us at ${process.env.EMAIL_USER}
 
-© ${new Date().getFullYear()} DuaonAI. All rights reserved.
-`
+© ${new Date().getFullYear()} Duaon AI. All rights reserved.`
     };
 
     try {
