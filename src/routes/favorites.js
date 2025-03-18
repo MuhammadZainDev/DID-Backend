@@ -20,11 +20,23 @@ router.post('/', auth, async (req, res) => {
       return res.status(400).json({ error: 'Subcategory ID is required' });
     }
     
-    const result = await Favorite.addToFavorites(req.user.userId, duaId, subcategoryId);
+    // Sanitize inputs
+    const sanitizedDuaId = String(duaId).trim();
+    const sanitizedSubcategoryId = String(subcategoryId).trim();
+    const userId = req.user.userId;
+    
+    const result = await Favorite.addToFavorites(userId, sanitizedDuaId, sanitizedSubcategoryId);
+    
+    // Check if result contains an error message
+    if (result && result.error) {
+      return res.status(400).json({ error: result.error });
+    }
+    
     res.status(201).json(result);
   } catch (error) {
     logger.error(`Error adding to favorites: ${error.message}`);
-    res.status(500).json({ error: 'Server error' });
+    // Ensure error response is properly formatted
+    res.status(500).json({ error: 'Server error: ' + error.message });
   }
 });
 

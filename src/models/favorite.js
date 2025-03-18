@@ -4,6 +4,16 @@ class Favorite {
   // Add a dua to favorites
   static async addToFavorites(userId, duaId, subcategoryId) {
     try {
+      // Sanitize inputs
+      userId = String(userId).trim();
+      duaId = String(duaId).trim();
+      subcategoryId = String(subcategoryId).trim();
+      
+      // Validate inputs
+      if (!userId || !duaId || !subcategoryId) {
+        return { error: 'Invalid input: userId, duaId, and subcategoryId are required' };
+      }
+      
       // Check if already in favorites
       const checkQuery = 'SELECT id FROM favorites WHERE user_id = $1 AND dua_id = $2';
       const checkResult = await pool.query(checkQuery, [userId, duaId]);
@@ -20,9 +30,16 @@ class Favorite {
       const values = [userId, duaId, subcategoryId];
       const { rows } = await pool.query(query, values);
       
-      return rows[0];
+      // Ensure we're returning a valid JSON object
+      if (rows && rows.length > 0) {
+        return rows[0];
+      }
+      
+      return { message: 'Added to favorites' };
     } catch (error) {
-      throw error;
+      // Ensure error is properly formatted for JSON response
+      console.error('Error in addToFavorites:', error.message);
+      throw new Error(error.message || 'Failed to add to favorites');
     }
   }
   
