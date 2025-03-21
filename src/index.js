@@ -76,7 +76,8 @@ app.use('/api/gemini', geminiDuaRoutes);
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
 });
-
+// Serve static files from the docs directory
+app.use('/docs', express.static(path.join(__dirname, '../docs')));
 // Error handling
 app.use(errorHandler);
 
