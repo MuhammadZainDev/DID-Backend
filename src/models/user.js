@@ -1,5 +1,6 @@
 const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
+const logger = require('../utils/logger');
 
 class User {
   static async createUser({ name, email, password }) {
@@ -86,6 +87,33 @@ class User {
       return rows[0];
     } catch (error) {
       throw error;
+    }
+  }
+
+  static async deleteUser(userId) {
+    const client = await pool.connect();
+    
+    try {
+      // Start transaction
+      await client.query('BEGIN');
+      
+      // First delete all favorites associated with this user
+      await client.query('DELETE FROM favorites WHERE user_id = $1', [userId]);
+      
+      // Then delete the user
+      const result = await client.query('DELETE FROM users WHERE id = $1 RETURNING id', [userId]);
+      
+      // Commit transaction
+      await client.query('COMMIT');
+      
+      return result.rows[0] || null;
+    } catch (error) {
+      // Rollback transaction in case of error
+      await client.query('ROLLBACK');
+      logger.error(`Error deleting user: ${error.message}`);
+      throw error;
+    } finally {
+      client.release();
     }
   }
 }
