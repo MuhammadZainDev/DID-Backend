@@ -152,8 +152,17 @@ router.post('/forgot-password', async (req, res) => {
       logger.debug(`User found: ${user.id}`);
     }
 
-    // Generate a secure token
-    const resetToken = crypto.randomBytes(3).toString('hex');
+    // Replace with numeric token generation
+    const generateNumericToken = (length = 6) => {
+      let token = '';
+      for (let i = 0; i < length; i++) {
+        token += Math.floor(Math.random() * 10); // Random digit 0-9
+      }
+      return token;
+    };
+
+    // Generate a secure numeric token
+    const resetToken = generateNumericToken(6);
     
     if (process.env.NODE_ENV !== 'production') {
       logger.debug(`Generated reset token for ${email}`);
